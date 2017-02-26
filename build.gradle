@@ -86,7 +86,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        compile files("libs/game-lib.jar")
+        compile files("libs/game_lib.jar")
     }
 }
 
