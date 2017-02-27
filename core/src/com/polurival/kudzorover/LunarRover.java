@@ -16,11 +16,24 @@ import com.boontaran.games.StageGame;
 
 public class LunarRover extends Game {
 
-    private boolean loadingAssets = false;
-    private AssetManager assetManager;
+    public static final int SHOW_BANNER = 1;
+    public static final int HIDE_BANNER = 2;
+    public static final int LOAD_INTERSTITIAL = 3;
+    public static final int SHOW_INTERSTITIAL = 4;
+    public static final int OPEN_MARKET = 5;
+    public static final int SHARE = 6;
 
     public static TextureAtlas atlas;
     public static BitmapFont font40;
+
+    private boolean loadingAssets = false;
+    private AssetManager assetManager;
+
+    private GameCallback gameCallback;
+
+    public LunarRover(GameCallback gameCallback) {
+        this.gameCallback = gameCallback;
+    }
 
     @Override
     public void create() {
