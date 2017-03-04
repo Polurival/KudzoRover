@@ -12,7 +12,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.boontaran.games.StageGame;
+
+import java.util.Locale;
 
 public class LunarRover extends Game {
 
@@ -29,6 +32,9 @@ public class LunarRover extends Game {
     private boolean loadingAssets = false;
     private AssetManager assetManager;
 
+    private I18NBundle bundle; // для выбора ресурсов в зависимости от локализации
+    private String path_to_atlas;
+
     private GameCallback gameCallback;
 
     public LunarRover(GameCallback gameCallback) {
@@ -41,9 +47,13 @@ public class LunarRover extends Game {
 
         Gdx.input.setCatchBackKey(true);
 
+        Locale locale = Locale.getDefault();
+        bundle = I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
+        path_to_atlas = bundle.get("path");
+
         loadingAssets = true;
         assetManager = new AssetManager();
-        assetManager.load("images_ru/pack.atlas", TextureAtlas.class);
+        assetManager.load(path_to_atlas, TextureAtlas.class);
         assetManager.load("musics/music1.ogg", Music.class);
         assetManager.load("musics/level_failed.ogg", Music.class);
         assetManager.load("musics/level_win.ogg", Music.class);
@@ -81,7 +91,7 @@ public class LunarRover extends Game {
     }
 
     private void onAssetLoaded() {
-        atlas = assetManager.get("images_ru/pack.atlas", TextureAtlas.class);
+        atlas = assetManager.get(path_to_atlas, TextureAtlas.class);
         font40 = assetManager.get("font40.ttf", BitmapFont.class);
     }
 
