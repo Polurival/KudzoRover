@@ -14,6 +14,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.I18NBundle;
 import com.boontaran.games.StageGame;
+import com.polurival.kudzorover.levels.LevelList;
+import com.polurival.kudzorover.media.Media;
+import com.polurival.kudzorover.screens.Intro;
+import com.polurival.kudzorover.utils.Data;
 
 import java.util.Locale;
 
@@ -28,6 +32,8 @@ public class LunarRover extends Game {
 
     public static TextureAtlas atlas;
     public static BitmapFont font40;
+    public static Media media; // загружает звуки
+    public static Data data;
 
     private boolean loadingAssets = false;
     private AssetManager assetManager;
@@ -36,6 +42,9 @@ public class LunarRover extends Game {
     private String path_to_atlas;
 
     private GameCallback gameCallback;
+
+    private Intro intro;
+    private LevelList levelList;
 
     public LunarRover(GameCallback gameCallback) {
         this.gameCallback = gameCallback;
@@ -71,6 +80,9 @@ public class LunarRover extends Game {
         sizeParams.fontParameters.size = 40;
 
         assetManager.load("font40.ttf", BitmapFont.class, sizeParams);
+
+        media = new Media(assetManager);
+        data = new Data();
     }
 
     @Override
@@ -93,9 +105,65 @@ public class LunarRover extends Game {
     private void onAssetLoaded() {
         atlas = assetManager.get(path_to_atlas, TextureAtlas.class);
         font40 = assetManager.get("font40.ttf", BitmapFont.class);
+
+        showIntro();
     }
 
     private void exitApp() {
         Gdx.app.exit();
+    }
+
+    private void showIntro() {
+        intro = new Intro();
+        setScreen(intro);
+
+        intro.setCallback(new StageGame.Callback() {
+            @Override
+            public void call(int code) {
+                if (code == Intro.ON_PLAY) {
+                    showLevelList();
+                    hideIntro();
+                } else if (code == Intro.ON_BACK) {
+                    exitApp();
+                }
+            }
+        });
+
+        media.playMusic("music1.ogg", true);
+    }
+
+    private void hideIntro() {
+        intro = null;
+    }
+
+    private void showLevelList() {
+        levelList = new LevelList();
+        setScreen(levelList);
+
+        levelList.setCallback(new StageGame.Callback() {
+            @Override
+            public void call(int code) {
+
+                if (code == LevelList.ON_BACK) {
+                    showIntro();
+                    hideLevelList();
+                } else if (code == LevelList.ON_LEVEL_SELECTED) {
+                    //showLevel();
+                    hideLevelList();
+                } else if(code == LevelList.ON_OPEN_MARKET) {
+                    gameCallback.sendMessage(OPEN_MARKET);
+                } else if (code == LevelList.ON_SHARE) {
+                    gameCallback.sendMessage(SHARE);
+                }
+            }
+        });
+
+        gameCallback.sendMessage(SHOW_BANNER);
+        media.playMusic("music1.ogg", true);
+    }
+
+    private void hideLevelList() {
+        levelList = null;
+        gameCallback.sendMessage(HIDE_BANNER);
     }
 }
